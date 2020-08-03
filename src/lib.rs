@@ -1,17 +1,25 @@
 extern crate base64;
-use std::u8;
-use self::base64::{encode};
+extern crate hex;
 
+/// Convert hex to base64
+///
+/// https://cryptopals.com/sets/1/challenges/1
 pub fn hex_to_base64(hex: String) -> String {
-    // Make vector of bytes from octets
-    let mut bytes = Vec::new();
-    for i in 0..(hex.len()/2) {
-        let res = u8::from_str_radix(&hex[2*i .. 2*i+2], 16);
-        match res {
-            Ok(v) => bytes.push(v),
-            Err(e) => println!("Problem with hex: {}", e),
-        };
-    };
+    let bin: Vec<u8> = hex::decode(hex).unwrap();
+    base64::encode(bin)
+}
 
-    encode(&bytes) // now convert from Vec<u8> to b64-encoded String
+/// Fixed XOR
+///
+/// https://cryptopals.com/sets/1/challenges/2
+pub fn xor(hex1: String, hex2: String) -> String {
+    assert_eq!(hex1.len(), hex2.len());
+
+    let bin1 = hex::decode(hex1).unwrap();
+    let bin2 = hex::decode(hex2).unwrap();
+    let mut xor = Vec::new();
+    for i in 0..(bin1.len()) {
+        xor.push(&bin1[i] ^ &bin2[i])
+    }
+    return hex::encode(xor);
 }
